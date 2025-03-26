@@ -19,6 +19,9 @@ Platform: AWS
 
 Delete Amazon Bedrock model invocation logging configuration. Simulates an attacker disrupting AI activity monitoring.
 
+WARNING: Only one model invocation logging configuration is allowed per region. This technique runs in ca-central-1 by default.
+If you use ca-central-1 for production Bedrock usage, you should modify the region in both main.tf and main.go before running this technique.
+
 <span style="font-variant: small-caps;">Warm-up</span>: 
 
 - Create a Bedrock model invocation logging configuration.
