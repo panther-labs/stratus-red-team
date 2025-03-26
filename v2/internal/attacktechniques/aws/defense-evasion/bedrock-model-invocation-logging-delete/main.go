@@ -41,10 +41,16 @@ Identify when Bedrock model invocation logging is deleted, through CloudTrail's 
 }
 
 func detonate(params map[string]string, providers stratus.CloudProviders) error {
-	bedrockClient := bedrock.NewFromConfig(providers.AWS().GetConnection())
+	// Get the base AWS configuration
+	cfg := providers.AWS().GetConnection()
+
+	// Override the region to ca-central-1 to match the Terraform configuration
+	cfg.Region = "ca-central-1"
+
+	bedrockClient := bedrock.NewFromConfig(cfg)
 	loggingConfigID := params["bedrock_logging_config_id"]
 
-	log.Println("Deleting Bedrock model invocation logging configuration " + loggingConfigID)
+	log.Println("Deleting Bedrock model invocation logging configuration " + loggingConfigID + " in region ca-central-1")
 
 	_, err := bedrockClient.DeleteModelInvocationLoggingConfiguration(context.Background(), &bedrock.DeleteModelInvocationLoggingConfigurationInput{})
 

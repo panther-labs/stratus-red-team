@@ -8,6 +8,7 @@ terraform {
 }
 
 provider "aws" {
+  region                     = "ca-central-1"
   skip_region_validation      = true
   skip_credentials_validation = true
   default_tags {
