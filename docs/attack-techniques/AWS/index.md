@@ -121,6 +121,8 @@ Note that some Stratus attack techniques may correspond to more than a single AT
 
 ## Impact
   
+  - [Trigger Bedrock Guardrail](./aws.impact.bedrock-guardrail-trigger.md)
+  
   - [Invoke Bedrock Model](./aws.impact.bedrock-invoke-model.md)
   
   - [S3 Ransomware through batch file deletion](./aws.impact.s3-ransomware-batch-deletion.md)
