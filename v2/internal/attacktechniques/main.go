@@ -7,6 +7,7 @@ import (
 	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques/aws/credential-access/secretsmanager-retrieve-secrets"
 	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques/aws/credential-access/ssm-retrieve-securestring-parameters"
 	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques/aws/defense-evasion/bedrock-model-invocation-logging-delete"
+	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques/aws/defense-evasion/bedrock-guardrail-delete"
 	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques/aws/defense-evasion/cloudtrail-delete"
 	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques/aws/defense-evasion/cloudtrail-event-selectors"
 	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques/aws/defense-evasion/cloudtrail-lifecycle-rule"
