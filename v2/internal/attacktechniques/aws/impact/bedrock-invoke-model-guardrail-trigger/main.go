@@ -35,12 +35,12 @@ Detonation:
 - Send a harmful prompt to a Bedrock model using the InvokeModel API with guardrail parameters.
 `,
 		Detection: `
-Identify when a Bedrock guardrail is triggered by monitoring CloudTrail for <code>InvokeModel</code> events with a 
-guardrail identifier in the <code>requestParameters</code>. Unlike some other services, successful guardrail 
-triggers still appear as successful API calls in CloudTrail, not as errors.
+Identify when a Bedrock guardrail is triggered by monitoring Bedrock Model Invocation logs. Guardrail triggers 
+are not visible in CloudTrail events as they appear as successful API calls.
 
-To detect guardrail triggers, you should examine the model responses or set up additional guardrail
-monitoring through Bedrock's model invocation logging capabilities.
+To detect guardrail triggers, you need to enable and examine Bedrock's model invocation logging capabilities, 
+which will show when guardrails have intercepted potentially harmful content. Look for the guardrail action 
+field in these logs indicating intervention.
 `,
 		IsIdempotent:               true, // can trigger the guardrail multiple times
 		PrerequisitesTerraformCode: tf,
