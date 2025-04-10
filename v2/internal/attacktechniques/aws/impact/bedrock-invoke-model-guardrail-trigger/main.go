@@ -19,12 +19,12 @@ var tf []byte
 
 func init() {
 	stratus.GetRegistry().RegisterAttackTechnique(&stratus.AttackTechnique{
-		ID:                 "aws.impact.bedrock-guardrail-trigger",
-		FriendlyName:       "Trigger Bedrock Guardrail",
+		ID:                 "aws.impact.bedrock-invoke-model-guardrail-trigger",
+		FriendlyName:       "Trigger Bedrock Guardrail via InvokeModel API",
 		Platform:           stratus.AWS,
 		MitreAttackTactics: []mitreattack.Tactic{mitreattack.Impact},
 		Description: `
-Trigger an Amazon Bedrock guardrail with harmful content. Simulates testing the limits of AI safety controls.
+Trigger an Amazon Bedrock guardrail using the InvokeModel API with harmful content. Simulates testing the limits of AI safety controls through direct model invocation.
 
 Warm-up: 
 
@@ -32,7 +32,7 @@ Warm-up:
 
 Detonation: 
 
-- Send a prompt to a Bedrock model that should trigger the guardrail.
+- Send a harmful prompt to a Bedrock model using the InvokeModel API with guardrail parameters.
 `,
 		Detection: `
 Identify when a Bedrock guardrail is triggered by monitoring CloudTrail for <code>InvokeModel</code> events with a 
@@ -67,7 +67,7 @@ func detonate(params map[string]string, providers stratus.CloudProviders) error 
 	modelID := params["bedrock_model_id"]
 	guardrailVersion := params["bedrock_guardrail_version"]
 
-	log.Println("Sending potentially harmful prompt to Bedrock model with guardrail " + guardrailID)
+	log.Println("Sending potentially harmful prompt to Bedrock model via InvokeModel API with guardrail " + guardrailID)
 
 	// Prepare a message that should trigger the guardrail's hate speech filter
 	messageRequest := ClaudeMessageRequest{
@@ -107,8 +107,6 @@ func detonate(params map[string]string, providers stratus.CloudProviders) error 
 	}
 
 	// Parse the response to check if guardrail was triggered
-	// The structure of the response depends on the model, but for Claude models
-	// we can look for specific guardrail indicators in the response
 	var responseContent map[string]any
 	if err := json.Unmarshal(response.Body, &responseContent); err != nil {
 		return errors.New("failed to parse response: " + err.Error())
@@ -119,15 +117,7 @@ func detonate(params map[string]string, providers stratus.CloudProviders) error 
 	// Check for amazon-bedrock-guardrailAction which directly indicates guardrail intervention
 	if guardrailAction, exists := responseContent["amazon-bedrock-guardrailAction"].(string); exists {
 		if guardrailAction == "INTERVENED" {
-			log.Println("Successfully triggered the Bedrock guardrail (via amazon-bedrock-guardrailAction)")
-			return nil
-		}
-	}
-
-	// Check for stop_reason which may indicate a guardrail was triggered
-	if stopReason, exists := responseContent["stop_reason"].(string); exists {
-		if stopReason == "guardrail_intervened" {
-			log.Println("Successfully triggered the Bedrock guardrail (via stop_reason)")
+			log.Println("Successfully triggered the Bedrock guardrail via InvokeModel API (via amazon-bedrock-guardrailAction)")
 			return nil
 		}
 	}
@@ -138,7 +128,7 @@ func detonate(params map[string]string, providers stratus.CloudProviders) error 
 			if contentMap, isMap := item.(map[string]any); isMap {
 				if text, hasText := contentMap["text"].(string); hasText {
 					if text == "Your questions is bad and you should feel bad" {
-						log.Println("Successfully triggered the Bedrock guardrail (via blocked message)")
+						log.Println("Successfully triggered the Bedrock guardrail via InvokeModel API (via blocked message)")
 						return nil
 					}
 				}
