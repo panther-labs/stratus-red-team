@@ -48,7 +48,6 @@ field in these logs indicating intervention.
 	})
 }
 
-// Claude message format structures matching the Bedrock API
 type ClaudeMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
@@ -90,15 +89,13 @@ func detonate(params map[string]string, providers stratus.CloudProviders) error 
 
 	// Create model invocation input with guardrail ID
 	input := &bedrockruntime.InvokeModelInput{
-		ModelId:     &modelID,
-		Body:        body,
-		ContentType: aws.String("application/json"),
-		Accept:      aws.String("application/json"),
+		ModelId:             &modelID,
+		Body:                body,
+		ContentType:         aws.String("application/json"),
+		Accept:              aws.String("application/json"),
+		GuardrailIdentifier: &guardrailID,
+		GuardrailVersion:    &guardrailVersion,
 	}
-
-	// Add guardrail parameters
-	input.GuardrailIdentifier = &guardrailID
-	input.GuardrailVersion = &guardrailVersion
 
 	// Invoke the model
 	response, err := bedrockRuntimeClient.InvokeModel(context.Background(), input)
@@ -127,7 +124,7 @@ func detonate(params map[string]string, providers stratus.CloudProviders) error 
 		for _, item := range content {
 			if contentMap, isMap := item.(map[string]any); isMap {
 				if text, hasText := contentMap["text"].(string); hasText {
-					if text == "Your questions is bad and you should feel bad" {
+					if text == "Your question is bad and you should feel bad" {
 						log.Println("Successfully triggered the Bedrock guardrail via InvokeModel API (via blocked message)")
 						return nil
 					}
