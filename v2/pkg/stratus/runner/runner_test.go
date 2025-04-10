@@ -2,12 +2,13 @@ package runner
 
 import (
 	"errors"
+	"testing"
+
 	statemocks "github.com/datadog/stratus-red-team/v2/internal/state/mocks"
 	"github.com/datadog/stratus-red-team/v2/pkg/stratus"
 	"github.com/datadog/stratus-red-team/v2/pkg/stratus/runner/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 func TestRunnerWarmUp(t *testing.T) {
@@ -46,7 +47,7 @@ func TestRunnerWarmUp(t *testing.T) {
 			TerraformOutputs:      map[string]string{"myoutput": "new"},
 			CheckExpectations: func(t *testing.T, terraform *mocks.TerraformManager, state *statemocks.StateManager, outputs map[string]string, err error) {
 				state.AssertCalled(t, "ExtractTechnique")
-				terraform.AssertCalled(t, "TerraformInitAndApply", "/root/foo")
+				terraform.AssertCalled(t, "TerraformInitAndApply", "/root/foo", mock.AnythingOfType("map[string]string"))
 				state.AssertCalled(t, "WriteTerraformOutputs", map[string]string{"myoutput": "new"})
 				state.AssertCalled(t, "SetTechniqueState", stratus.AttackTechniqueState(stratus.AttackTechniqueStatusWarm))
 
@@ -74,7 +75,7 @@ func TestRunnerWarmUp(t *testing.T) {
 			InitialTechniqueState: stratus.AttackTechniqueStatusWarm,
 			TerraformOutputs:      map[string]string{"myoutput": "old"},
 			CheckExpectations: func(t *testing.T, terraform *mocks.TerraformManager, state *statemocks.StateManager, outputs map[string]string, err error) {
-				terraform.AssertCalled(t, "TerraformInitAndApply", "/root/foo")
+				terraform.AssertCalled(t, "TerraformInitAndApply", "/root/foo", mock.AnythingOfType("map[string]string"))
 				assert.Nil(t, err)
 				assert.Len(t, outputs, 1)
 				assert.Equal(t, "old", outputs["myoutput"])
@@ -98,7 +99,7 @@ func TestRunnerWarmUp(t *testing.T) {
 			InitialTechniqueState: stratus.AttackTechniqueStatusCold,
 			Error:                 errors.New("error during init and apply"),
 			CheckExpectations: func(t *testing.T, terraform *mocks.TerraformManager, state *statemocks.StateManager, outputs map[string]string, err error) {
-				terraform.AssertCalled(t, "TerraformInitAndApply", "/root/foo")
+				terraform.AssertCalled(t, "TerraformInitAndApply", "/root/foo", mock.AnythingOfType("map[string]string"))
 				terraform.AssertCalled(t, "TerraformDestroy", "/root/foo")
 				assert.NotNil(t, err)
 				assert.Len(t, outputs, 0)
@@ -114,7 +115,7 @@ func TestRunnerWarmUp(t *testing.T) {
 		state.On("ExtractTechnique").Return(nil)
 		state.On("GetTechniqueState", mock.Anything).Return(scenario[i].InitialTechniqueState, nil)
 		state.On("GetTerraformOutputs").Return(scenario[i].PersistedOutputs, nil)
-		terraform.On("TerraformInitAndApply", mock.Anything).Return(scenario[i].TerraformOutputs, scenario[i].Error)
+		terraform.On("TerraformInitAndApply", mock.AnythingOfType("string"), mock.AnythingOfType("map[string]string")).Return(scenario[i].TerraformOutputs, scenario[i].Error)
 		terraform.On("TerraformDestroy", mock.Anything).Return(nil)
 		state.On("WriteTerraformOutputs", mock.Anything).Return(nil)
 		state.On("SetTechniqueState", mock.Anything).Return(nil)
@@ -205,7 +206,7 @@ func TestRunnerDetonate(t *testing.T) {
 			state.On("GetRootDirectory").Return("/root")
 			state.On("ExtractTechnique").Return(nil)
 			state.On("GetTechniqueState", mock.Anything).Return(scenario[i].TechniqueState, nil)
-			terraform.On("TerraformInitAndApply", mock.Anything).Return(map[string]string{}, nil)
+			terraform.On("TerraformInitAndApply", mock.AnythingOfType("string"), mock.AnythingOfType("map[string]string")).Return(map[string]string{}, nil)
 			state.On("WriteTerraformOutputs", mock.Anything).Return(nil)
 			state.On("GetTerraformOutputs").Return(map[string]string{}, nil)
 			state.On("SetTechniqueState", mock.Anything).Return(nil)
@@ -236,7 +237,7 @@ func TestRunnerDetonate(t *testing.T) {
 			if scenario[i].ExpectWarmedUp {
 				terraform.AssertCalled(t, "TerraformInitAndApply", mock.Anything)
 			} else {
-				terraform.AssertNotCalled(t, "TerraformInitAndApply", mock.Anything)
+				terraform.AssertNotCalled(t, "TerraformInitAndApply")
 			}
 
 			if scenario[i].ExpectDetonated {
