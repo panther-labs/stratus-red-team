@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region                     = "ca-central-1"
+  region                      = "ca-central-1"
   skip_region_validation      = true
   skip_credentials_validation = true
   default_tags {
@@ -75,7 +75,7 @@ resource "aws_bedrock_model_invocation_logging_configuration" "test_logging" {
   logging_config {
     cloudwatch_config {
       log_group_name = aws_cloudwatch_log_group.bedrock_logs.name
-      role_arn      = aws_iam_role.bedrock_logging.arn
+      role_arn       = aws_iam_role.bedrock_logging.arn
     }
     text_data_delivery_enabled      = true
     embedding_data_delivery_enabled = true
