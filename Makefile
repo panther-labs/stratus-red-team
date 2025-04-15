@@ -34,7 +34,7 @@ test:
 
 lint:
 	@echo "Running Terraform linting..."
-	@cd v2/internal/attacktechniques && terraform fmt -recursive -check
+	@cd v2/internal/attacktechniques && terraform fmt -recursive -check -diff
 	@echo "Linting completed successfully."
 
 fmt:
