@@ -183,6 +183,13 @@ AWS:
           platform: AWS
           isIdempotent: true
     Impact:
+        - id: aws.impact.bedrock-invoke-model-guardrail-trigger
+          name: Trigger Bedrock Guardrail via InvokeModel API
+          isSlow: false
+          mitreAttackTactics:
+            - Impact
+          platform: AWS
+          isIdempotent: true
         - id: aws.impact.bedrock-invoke-model
           name: Invoke Bedrock Model
           isSlow: false
