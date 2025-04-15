@@ -1,18 +1,25 @@
 package main
 
 import (
-	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques"
-	"github.com/spf13/cobra"
 	"log"
 	"os"
+
+	_ "github.com/datadog/stratus-red-team/v2/internal/attacktechniques"
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
 	Use: "stratus",
 }
 
+// Flag to customize the User-Agent prefix and resource prefixes
+var customPrefix string
+
 func init() {
 	setupLogging()
+
+	// Setup the custom prefix flag
+	setupPrefixFlag(rootCmd)
 
 	listCmd := buildListCmd()
 	showCmd := buildShowCmd()

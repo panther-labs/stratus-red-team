@@ -3,14 +3,16 @@ package runner
 import (
 	"context"
 	"errors"
+	"log"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+
 	"github.com/datadog/stratus-red-team/v2/internal/state"
 	"github.com/datadog/stratus-red-team/v2/pkg/stratus"
 	"github.com/datadog/stratus-red-team/v2/pkg/stratus/useragent"
 	"github.com/google/uuid"
-	"log"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 const StratusRunnerForce = true
@@ -89,11 +91,6 @@ func (m *runnerImpl) WarmUp() (map[string]string, error) {
 		return map[string]string{}, nil
 	}
 
-	err := m.StateManager.ExtractTechnique()
-	if err != nil {
-		return nil, errors.New("unable to extract Terraform file: " + err.Error())
-	}
-
 	// We don't want to warm up the technique
 	var willWarmUp = true
 
@@ -113,8 +110,31 @@ func (m *runnerImpl) WarmUp() (map[string]string, error) {
 		return outputs, err
 	}
 
+	// Get the user agent prefix to use as resource prefix
+	userAgentPrefix := useragent.GetUserAgentPrefix()
+
+	// Always preprocess to add the resource_prefix variable
+	preprocessedCode, err := preprocessTerraformCode(m.Technique.PrerequisitesTerraformCode, userAgentPrefix)
+	if err != nil {
+		return nil, errors.New("error preprocessing Terraform code: " + err.Error())
+	}
+
+	// Use the preprocessed code instead of the original
+	m.Technique.PrerequisitesTerraformCode = preprocessedCode
+
+	// Extract the technique files
+	err = m.StateManager.ExtractTechnique()
+	if err != nil {
+		return nil, errors.New("unable to extract Terraform file: " + err.Error())
+	}
+
 	log.Println("Warming up " + m.Technique.ID)
-	outputs, err := m.TerraformManager.TerraformInitAndApply(m.TerraformDir)
+
+	// Create variables map to pass to Terraform
+	vars := map[string]string{}
+	vars["resource_prefix"] = userAgentPrefix
+
+	outputs, err := m.TerraformManager.TerraformInitAndApply(m.TerraformDir, vars)
 	if err != nil {
 		log.Println("Error during warm up. Cleaning up technique prerequisites with terraform destroy")
 		_ = m.TerraformManager.TerraformDestroy(m.TerraformDir)
@@ -133,6 +153,34 @@ func (m *runnerImpl) WarmUp() (map[string]string, error) {
 		log.Println(display)
 	}
 	return outputs, err
+}
+
+// preprocessTerraformCode modifies the Terraform code to use the custom prefix
+// This works by:
+// 1. Adding a variable declaration for resource_prefix at the top of the file
+// 2. Replacing the hardcoded resource_prefix definition in locals with var.resource_prefix
+func preprocessTerraformCode(code []byte, customPrefix string) ([]byte, error) {
+	codeStr := string(code)
+
+	// Add the variable definition at the beginning of the file
+	varDef := `variable "resource_prefix" {
+  description = "Prefix for resource names"
+  type        = string
+  default     = "` + customPrefix + `"
+}
+
+`
+	// Always add at the beginning of the file to ensure it's defined before it's used
+	codeStr = varDef + codeStr
+	log.Println("Added resource_prefix variable to the Terraform code")
+
+	// Replace the hardcoded resource_prefix in locals with var.resource_prefix
+	// Pattern: resource_prefix = "stratus-red-team-xyz" (with optional comment)
+	prefixRegex := regexp.MustCompile(`(resource_prefix\s+=\s+"stratus-red-team[^"]*")(\s*#.*)?`)
+	codeStr = prefixRegex.ReplaceAllString(codeStr, `resource_prefix = var.resource_prefix$2`)
+	log.Println("Replaced resource_prefix pattern with variable reference")
+
+	return []byte(codeStr), nil
 }
 
 func (m *runnerImpl) Detonate() error {

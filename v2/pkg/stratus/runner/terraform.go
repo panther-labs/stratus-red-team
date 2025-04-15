@@ -3,22 +3,23 @@ package runner
 import (
 	"context"
 	"errors"
+	"log"
+	"os"
+	"path"
+	"path/filepath"
+
 	"github.com/datadog/stratus-red-team/v2/internal/utils"
 	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hc-install/product"
 	"github.com/hashicorp/hc-install/releases"
 	"github.com/hashicorp/terraform-exec/tfexec"
-	"log"
-	"os"
-	"path"
-	"path/filepath"
 )
 
 const TerraformVersion = "1.1.2"
 
 type TerraformManager interface {
 	Initialize()
-	TerraformInitAndApply(directory string) (map[string]string, error)
+	TerraformInitAndApply(directory string, vars map[string]string) (map[string]string, error)
 	TerraformDestroy(directory string) error
 }
 
@@ -58,7 +59,7 @@ func (m *TerraformManagerImpl) Initialize() {
 	}
 }
 
-func (m *TerraformManagerImpl) TerraformInitAndApply(directory string) (map[string]string, error) {
+func (m *TerraformManagerImpl) TerraformInitAndApply(directory string, vars map[string]string) (map[string]string, error) {
 	terraform, err := tfexec.NewTerraform(directory, m.terraformBinaryPath)
 	if err != nil {
 		return map[string]string{}, errors.New("unable to instantiate Terraform: " + err.Error())
@@ -85,7 +86,17 @@ func (m *TerraformManagerImpl) TerraformInitAndApply(directory string) (map[stri
 	}
 
 	log.Println("Applying Terraform to spin up technique prerequisites")
-	err = terraform.Apply(m.context, tfexec.Refresh(false))
+
+	// Convert variables map to terraform vars format
+	tfVars := []tfexec.ApplyOption{}
+	for k, v := range vars {
+		tfVars = append(tfVars, tfexec.Var(k+"="+v))
+	}
+
+	// Add refresh option
+	tfVars = append(tfVars, tfexec.Refresh(false))
+
+	err = terraform.Apply(m.context, tfVars...)
 	if err != nil {
 		return nil, errors.New("unable to apply Terraform: " + err.Error())
 	}
