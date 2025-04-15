@@ -125,6 +125,8 @@ Note that some Stratus attack techniques may correspond to more than a single AT
 
 ## Impact
   
+  - [Trigger Bedrock Guardrail via Converse API](./aws.impact.bedrock-converse-guardrail-trigger.md)
+  
   - [Trigger Bedrock Guardrail via InvokeModel API](./aws.impact.bedrock-invoke-model-guardrail-trigger.md)
   
   - [Invoke Bedrock Model](./aws.impact.bedrock-invoke-model.md)
