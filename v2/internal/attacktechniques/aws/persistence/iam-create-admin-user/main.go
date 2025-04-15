@@ -4,15 +4,16 @@ import (
 	"context"
 	_ "embed"
 	"errors"
+	"log"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/datadog/stratus-red-team/v2/pkg/stratus"
 	"github.com/datadog/stratus-red-team/v2/pkg/stratus/mitreattack"
-	"log"
 )
 
-var userName = aws.String("malicious-iam-user")
+var userName = aws.String("charles-larousse-dreyfus")
 var adminPolicyArn = aws.String("arn:aws:iam::aws:policy/AdministratorAccess")
 
 func init() {
@@ -87,7 +88,8 @@ func detonate(_ map[string]string, providers stratus.CloudProviders) error {
 		return err
 	}
 
-	log.Println("Created access key " + *result.AccessKey.AccessKeyId)
+	log.Println("Created access key ID: " + *result.AccessKey.AccessKeyId)
+	log.Println("Secret access key: " + *result.AccessKey.SecretAccessKey)
 
 	return nil
 }
