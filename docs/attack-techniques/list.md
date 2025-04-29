@@ -14,6 +14,7 @@ This page contains the list of all Stratus Attack Techniques.
 | [Retrieve a High Number of Secrets Manager secrets (Batch)](./AWS/aws.credential-access.secretsmanager-batch-retrieve-secrets.md) | [AWS](./AWS/index.md) | Credential Access |
 | [Retrieve a High Number of Secrets Manager secrets](./AWS/aws.credential-access.secretsmanager-retrieve-secrets.md) | [AWS](./AWS/index.md) | Credential Access |
 | [Retrieve And Decrypt SSM Parameters](./AWS/aws.credential-access.ssm-retrieve-securestring-parameters.md) | [AWS](./AWS/index.md) | Credential Access |
+| [Delete Bedrock Model Invocation Logging](./AWS/aws.defense-evasion.bedrock-model-invocation-logging-delete.md) | [AWS](./AWS/index.md) | Defense Evasion |
 | [Delete Bedrock Guardrail](./AWS/aws.defense-evasion.bedrock-guardrail-delete.md) | [AWS](./AWS/index.md) | Defense Evasion |
 | [Delete CloudTrail Trail](./AWS/aws.defense-evasion.cloudtrail-delete.md) | [AWS](./AWS/index.md) | Defense Evasion |
 | [Disable CloudTrail Logging Through Event Selectors](./AWS/aws.defense-evasion.cloudtrail-event-selectors.md) | [AWS](./AWS/index.md) | Defense Evasion |
@@ -34,6 +35,7 @@ This page contains the list of all Stratus Attack Techniques.
 | [Exfiltrate EBS Snapshot by Sharing It](./AWS/aws.exfiltration.ec2-share-ebs-snapshot.md) | [AWS](./AWS/index.md) | Exfiltration |
 | [Exfiltrate RDS Snapshot by Sharing](./AWS/aws.exfiltration.rds-share-snapshot.md) | [AWS](./AWS/index.md) | Exfiltration |
 | [Backdoor an S3 Bucket via its Bucket Policy](./AWS/aws.exfiltration.s3-backdoor-bucket-policy.md) | [AWS](./AWS/index.md) | Exfiltration |
+| [Trigger Bedrock Guardrail via InvokeModel API](./AWS/aws.impact.bedrock-invoke-model-guardrail-trigger.md) | [AWS](./AWS/index.md) | Impact |
 | [Invoke Bedrock Model](./AWS/aws.impact.bedrock-invoke-model.md) | [AWS](./AWS/index.md) | Impact |
 | [S3 Ransomware through batch file deletion](./AWS/aws.impact.s3-ransomware-batch-deletion.md) | [AWS](./AWS/index.md) | Impact |
 | [S3 Ransomware through client-side encryption](./AWS/aws.impact.s3-ransomware-client-side-encryption.md) | [AWS](./AWS/index.md) | Impact |

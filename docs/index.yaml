@@ -36,6 +36,8 @@ AWS:
           platform: AWS
           isIdempotent: true
     Defense Evasion:
+        - id: aws.defense-evasion.bedrock-model-invocation-logging-delete
+          name: Delete Bedrock Model Invocation Logging
         - id: aws.defense-evasion.bedrock-guardrail-delete
           name: Delete Bedrock Guardrail
           isSlow: false
@@ -181,6 +183,13 @@ AWS:
           platform: AWS
           isIdempotent: true
     Impact:
+        - id: aws.impact.bedrock-invoke-model-guardrail-trigger
+          name: Trigger Bedrock Guardrail via InvokeModel API
+          isSlow: false
+          mitreAttackTactics:
+            - Impact
+          platform: AWS
+          isIdempotent: true
         - id: aws.impact.bedrock-invoke-model
           name: Invoke Bedrock Model
           isSlow: false
