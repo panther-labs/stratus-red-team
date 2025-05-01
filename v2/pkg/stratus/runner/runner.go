@@ -157,22 +157,30 @@ func (m *runnerImpl) WarmUp() (map[string]string, error) {
 
 // preprocessTerraformCode modifies the Terraform code to use the custom prefix
 // This works by:
-// 1. Adding a variable declaration for resource_prefix at the top of the file
+// 1. Adding a variable declaration for resource_prefix at the top of the file (if it doesn't exist)
 // 2. Replacing the hardcoded resource_prefix definition in locals with var.resource_prefix
 func preprocessTerraformCode(code []byte, customPrefix string) ([]byte, error) {
 	codeStr := string(code)
 
-	// Add the variable definition at the beginning of the file
-	varDef := `variable "resource_prefix" {
+	// Check if a resource_prefix variable already exists
+	varExists := regexp.MustCompile(`variable\s+"resource_prefix"\s+{`).MatchString(codeStr)
+
+	// Only add the variable if it doesn't already exist
+	if !varExists {
+		// Add the variable definition at the beginning of the file
+		varDef := `variable "resource_prefix" {
   description = "Prefix for resource names"
   type        = string
   default     = "` + customPrefix + `"
 }
 
 `
-	// Always add at the beginning of the file to ensure it's defined before it's used
-	codeStr = varDef + codeStr
-	log.Println("Added resource_prefix variable to the Terraform code")
+		// Add at the beginning of the file to ensure it's defined before it's used
+		codeStr = varDef + codeStr
+		log.Println("Added resource_prefix variable to the Terraform code")
+	} else {
+		log.Println("resource_prefix variable already exists in the Terraform code")
+	}
 
 	// Replace the hardcoded resource_prefix in locals with var.resource_prefix
 	// Pattern: resource_prefix = "stratus-red-team-xyz" (with optional comment)
