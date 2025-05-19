@@ -17,7 +17,7 @@ data "google_client_config" "current" {}
 locals {
   resource_prefix = "stratus-tbpe" # stratus red team tag-based privilege escalation (shortened)
   # Use regex instead of endswith to check for service account
-  principal_type  = can(regex(".+\\.gserviceaccount\\.com$", data.google_client_openid_userinfo.whoami.email)) ? "serviceAccount" : "user"
+  principal_type = can(regex(".+\\.gserviceaccount\\.com$", data.google_client_openid_userinfo.whoami.email)) ? "serviceAccount" : "user"
 }
 
 resource "random_string" "suffix" {
@@ -30,15 +30,15 @@ resource "random_string" "suffix" {
 
 # Create a tag key
 resource "google_tags_tag_key" "env_tag_key" {
-  parent     = "projects/${data.google_client_config.current.project}"
-  short_name = "env"
+  parent      = "projects/${data.google_client_config.current.project}"
+  short_name  = "env"
   description = "Environment tag used for conditional access"
 }
 
 # Create a tag value
 resource "google_tags_tag_value" "sandbox_tag_value" {
-  parent     = google_tags_tag_key.env_tag_key.id
-  short_name = "sandbox"
+  parent      = google_tags_tag_key.env_tag_key.id
+  short_name  = "sandbox"
   description = "Sandbox environment"
 }
 
@@ -86,7 +86,7 @@ resource "google_project_iam_member" "conditional_admin" {
   project = data.google_client_config.current.project
   role    = "roles/compute.admin"
   member  = "${local.principal_type}:${data.google_client_openid_userinfo.whoami.email}"
-  
+
   condition {
     title       = "sandbox_env_condition"
     description = "Grant compute.admin if resource has env=sandbox tag"
