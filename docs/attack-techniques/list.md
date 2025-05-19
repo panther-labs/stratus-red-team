@@ -14,8 +14,8 @@ This page contains the list of all Stratus Attack Techniques.
 | [Retrieve a High Number of Secrets Manager secrets (Batch)](./AWS/aws.credential-access.secretsmanager-batch-retrieve-secrets.md) | [AWS](./AWS/index.md) | Credential Access |
 | [Retrieve a High Number of Secrets Manager secrets](./AWS/aws.credential-access.secretsmanager-retrieve-secrets.md) | [AWS](./AWS/index.md) | Credential Access |
 | [Retrieve And Decrypt SSM Parameters](./AWS/aws.credential-access.ssm-retrieve-securestring-parameters.md) | [AWS](./AWS/index.md) | Credential Access |
-| [Delete Bedrock Model Invocation Logging](./AWS/aws.defense-evasion.bedrock-model-invocation-logging-delete.md) | [AWS](./AWS/index.md) | Defense Evasion |
 | [Delete Bedrock Guardrail](./AWS/aws.defense-evasion.bedrock-guardrail-delete.md) | [AWS](./AWS/index.md) | Defense Evasion |
+| [Delete Bedrock Model Invocation Logging](./AWS/aws.defense-evasion.bedrock-model-invocation-logging-delete.md) | [AWS](./AWS/index.md) | Defense Evasion |
 | [Delete CloudTrail Trail](./AWS/aws.defense-evasion.cloudtrail-delete.md) | [AWS](./AWS/index.md) | Defense Evasion |
 | [Disable CloudTrail Logging Through Event Selectors](./AWS/aws.defense-evasion.cloudtrail-event-selectors.md) | [AWS](./AWS/index.md) | Defense Evasion |
 | [CloudTrail Logs Impairment Through S3 Lifecycle Rule](./AWS/aws.defense-evasion.cloudtrail-lifecycle-rule.md) | [AWS](./AWS/index.md) | Defense Evasion |
@@ -75,6 +75,7 @@ This page contains the list of all Stratus Attack Techniques.
 | [Create an Admin GCP Service Account](./GCP/gcp.persistence.create-admin-service-account.md) | [GCP](./GCP/index.md) | Persistence, Privilege Escalation |
 | [Create a GCP Service Account Key](./GCP/gcp.persistence.create-service-account-key.md) | [GCP](./GCP/index.md) | Persistence, Privilege Escalation |
 | [Invite an External User to a GCP Project](./GCP/gcp.persistence.invite-external-user.md) | [GCP](./GCP/index.md) | Persistence |
+| [Privilege Escalation via GCP Tag Bindings](./GCP/gcp.privilege-escalation.tag-based-privilege-escalation.md) | [GCP](./GCP/index.md) | Privilege Escalation |
 | [Dump All Secrets](./kubernetes/k8s.credential-access.dump-secrets.md) | [Kubernetes](./kubernetes/index.md) | Credential Access |
 | [Steal Pod Service Account Token](./kubernetes/k8s.credential-access.steal-serviceaccount-token.md) | [Kubernetes](./kubernetes/index.md) | Credential Access |
 | [Create Admin ClusterRole](./kubernetes/k8s.persistence.create-admin-clusterrole.md) | [Kubernetes](./kubernetes/index.md) | Persistence, Privilege Escalation |

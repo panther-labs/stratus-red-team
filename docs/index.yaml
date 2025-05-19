@@ -36,10 +36,15 @@ AWS:
           platform: AWS
           isIdempotent: true
     Defense Evasion:
-        - id: aws.defense-evasion.bedrock-model-invocation-logging-delete
-          name: Delete Bedrock Model Invocation Logging
         - id: aws.defense-evasion.bedrock-guardrail-delete
           name: Delete Bedrock Guardrail
+          isSlow: false
+          mitreAttackTactics:
+            - Defense Evasion
+          platform: AWS
+          isIdempotent: false
+        - id: aws.defense-evasion.bedrock-model-invocation-logging-delete
+          name: Delete Bedrock Model Invocation Logging
           isSlow: false
           mitreAttackTactics:
             - Defense Evasion
@@ -486,6 +491,13 @@ GCP:
             - Privilege Escalation
           platform: GCP
           isIdempotent: false
+        - id: gcp.privilege-escalation.tag-based-privilege-escalation
+          name: Privilege Escalation via GCP Tag Bindings
+          isSlow: false
+          mitreAttackTactics:
+            - Privilege Escalation
+          platform: GCP
+          isIdempotent: true
         - id: gcp.privilege-escalation.impersonate-service-accounts
           name: Impersonate GCP Service Accounts
           isSlow: false
