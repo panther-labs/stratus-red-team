@@ -15,7 +15,7 @@ data "google_client_openid_userinfo" "whoami" {}
 data "google_client_config" "current" {}
 
 locals {
-  resource_prefix = "stratus-tbpe" # stratus red team tag-based privilege escalation (shortened)
+  resource_prefix = "stratus-red-team-tbpe" # stratus red team tag-based privilege escalation
   # Use regex instead of endswith to check for service account
   principal_type = can(regex(".+\\.gserviceaccount\\.com$", data.google_client_openid_userinfo.whoami.email)) ? "serviceAccount" : "user"
 }
@@ -31,14 +31,14 @@ resource "random_string" "suffix" {
 # Create a tag key
 resource "google_tags_tag_key" "env_tag_key" {
   parent      = "projects/${data.google_client_config.current.project}"
-  short_name  = "env"
+  short_name  = "${local.resource_prefix}-tag-key-${random_string.suffix.result}"
   description = "Environment tag used for conditional access"
 }
 
 # Create a tag value
 resource "google_tags_tag_value" "sandbox_tag_value" {
   parent      = google_tags_tag_key.env_tag_key.id
-  short_name  = "sandbox"
+  short_name  = "${local.resource_prefix}-tag-value-${random_string.suffix.result}"
   description = "Sandbox environment"
 }
 

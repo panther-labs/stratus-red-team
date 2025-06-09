@@ -31,16 +31,16 @@ Simulates a privilege escalation attack in Google Cloud Platform (GCP) by exploi
 
 Warm-up:
 
-- Creates a tag key and value (env=sandbox)
+- Creates a tag key and value with dynamically generated names
 - Creates a Compute Engine VM instance
-- Sets up an IAM policy with a conditional binding that grants compute.admin role when a resource has the env=sandbox tag
+- Sets up an IAM policy with a conditional binding that grants compute.admin role when a resource has the dynamically created tag
 - Grants the current user roles/resourcemanager.tagUser and roles/viewer permissions
 
 Detonation:
 
 - Enumerates IAM policies to discover conditional role bindings
 - Lists available tag keys and values in the environment
-- Creates a tag binding to attach the env=sandbox tag to the VM instance
+- Creates a tag binding to attach the dynamically created tag to the VM instance
 - Attempts a privileged operation (modifying the VM's description) that should succeed after the tag is attached
 
 References:
@@ -193,7 +193,7 @@ func detonate(params map[string]string, providers stratus.CloudProviders) error 
 	log.Printf("Target tag key: %s with value: %s (full name: %s)\n", tagKey, tagValue, tagValueFullName)
 
 	// Step 3: Create tag binding to attach the tag to the VM instance
-	log.Println("Step 3: Creating tag binding to attach the env=sandbox tag to the VM instance")
+	log.Printf("Step 3: Creating tag binding to attach the %s=%s tag to the VM instance", tagKey, tagValue)
 
 	computeService, err := compute.NewService(ctx, providers.GCP().Options())
 	if err != nil {
