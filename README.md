@@ -1,6 +1,23 @@
-# Stratus Red Team
+# Stratus Red Team - Panther Custom Fork
 
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)  [![Tests](https://github.com/DataDog/stratus-red-team/actions/workflows/test.yml/badge.svg)](https://github.com/DataDog/stratus-red-team/actions/workflows/test.yml) [![static analysis](https://github.com/DataDog/stratus-red-team/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/DataDog/stratus-red-team/actions/workflows/static-analysis.yml) ![Maintainer](https://img.shields.io/badge/maintainer-@christophetd-blue) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/DataDog/stratus-red-team/badge)](https://api.securityscorecards.dev/projects/github.com/DataDog/stratus-red-team) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6530/badge)](https://bestpractices.coreinfrastructure.org/projects/6530)
+
+## New Attack Techniques
+### AWS
+- `aws.defense-evasion.bedrock-guardrail-delete`
+- `aws.defense-evasion.bedrock-model-invocation-logging-delete`
+- `aws.impact.bedrock-invoke-model-guardrail-trigger`
+- `aws.impact.bedrock-converse-guardrail-trigger`
+- `aws.persistence.iam-create-admin-user` customized to print access key ID
+
+### GCP
+- `gcp.privilege-escalation.tag-based-privilege-escalation`
+
+## Custom Flags
+- `--prefix` set a custom prefix for user agent and resources (`stratus-red-team` default)
+
+
+# Stratus Red Team
 
 <p align="center">
   <img src="./docs/logo.png" alt="Stratus Red Team" width="300" />
