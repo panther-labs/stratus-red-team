@@ -11,9 +11,6 @@ This repository is a Panther-enhanced fork of Stratus Red Team that adds **end-t
   </a>
 </p>
 
-## Panther-Enhanced Fork
-
-This fork adds **end-to-end integration testing for detection engineering**. Instead of crafted test cases that may not match production logs, simulate real attacks to generate authentic log data for detection validation.
 
 ### Why End-to-End Testing?
 
