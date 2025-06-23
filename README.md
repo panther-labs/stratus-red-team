@@ -22,7 +22,8 @@ Traditional detection testing uses theoretical log samples that may differ from 
 
 ### Panther enhancements
 
-**Custom Prefix Support** - Use `--prefix` to avoid "stratus-red-team" detection by AI systems:
+#### Custom prefix support
+Use `--prefix` to avoid "stratus-red-team" detection by AI systems:
 ```bash
 stratus detonate aws.persistence.iam-create-admin-user --prefix "security-test"
 ```
