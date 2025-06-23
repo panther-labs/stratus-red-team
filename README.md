@@ -20,7 +20,7 @@ Traditional detection testing uses theoretical log samples that may differ from 
 - **Enables test-driven detection development** with real attack patterns
 - **Provides confidence** that idle detection rules will work when attacks occur
 
-### Panther Enhancements
+### Panther enhancements
 
 **Custom Prefix Support** - Use `--prefix` to avoid "stratus-red-team" detection by AI systems:
 ```bash
