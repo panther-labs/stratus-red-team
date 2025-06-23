@@ -36,7 +36,7 @@ stratus detonate aws.persistence.iam-create-admin-user --prefix "security-test"
 - `aws.persistence.iam-create-admin-user` - customized to print access key ID
 - `gcp.privilege-escalation.tag-based-privilege-escalation` - Escalate GCP compute privileges via conditional access tags
 
-**Detection Workflow**:
+#### Detection Workflow
 1. Run attack simulations → Generate authentic logs
 2. Export CloudTrail/app logs → Create test fixtures  
 3. Write detections → Based on real attack patterns
