@@ -41,7 +41,7 @@ stratus detonate aws.persistence.iam-create-admin-user --prefix "security-test"
 2. Export CloudTrail/application logs
 3. Create test fixtures using the logs you exported
 4. Write detections
-4. Re-run simulations → Validate end-to-end pipeline
+5. Re-run attack simulations to validate your pipeline end-to-end
 
 ### Related Projects & Talks
 
