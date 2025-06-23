@@ -34,7 +34,7 @@ Enhanced AI/Bedrock security testing:
 - `aws.defense-evasion.bedrock-model-invocation-logging-delete` - Disrupt AI activity monitoring
 - `aws.impact.bedrock-converse-guardrail-trigger` - Test guardrail limits via Converse API
 - `aws.impact.bedrock-invoke-model-guardrail-trigger` - Test guardrail limits via InvokeModel API
-- `aws.persistence.iam-create-admin-user` - customized to print access key ID
+- `aws.persistence.iam-create-admin-user` - Customized to print access key ID
 - `gcp.privilege-escalation.tag-based-privilege-escalation` - Escalate GCP compute privileges via conditional access tags
 
 #### Detection Workflow
