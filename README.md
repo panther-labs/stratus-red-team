@@ -49,7 +49,7 @@ Enhanced AI/Bedrock security testing:
 #### Grimoire
 Panther also has a [fork of Grimoire](https://github.com/panther-labs/grimoire), which you can use for end-to-end detection testing automation
 
-**Talks**:
+#### Talks
 - [Incorporating End to End Integration Testing into your Detection Engineering Workflow - Open Cloud Security Conference (short version)](https://youtu.be/4Ijyc2JW-3w)
 - Incorporating End to End Integration Testing into your Detection Engineering Workflow - BSides Boulder (full version) - link TBD
 
