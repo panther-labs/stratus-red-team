@@ -1,27 +1,4 @@
-# Stratus Red Team - Panther Custom Fork
-
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)  [![Tests](https://github.com/DataDog/stratus-red-team/actions/workflows/test.yml/badge.svg)](https://github.com/DataDog/stratus-red-team/actions/workflows/test.yml) [![static analysis](https://github.com/DataDog/stratus-red-team/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/DataDog/stratus-red-team/actions/workflows/static-analysis.yml) ![Maintainer](https://img.shields.io/badge/maintainer-@christophetd-blue) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/DataDog/stratus-red-team/badge)](https://api.securityscorecards.dev/projects/github.com/DataDog/stratus-red-team) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6530/badge)](https://bestpractices.coreinfrastructure.org/projects/6530)
-
-## New Attack Techniques
-### AWS
-- `aws.defense-evasion.bedrock-guardrail-delete`
-- `aws.defense-evasion.bedrock-model-invocation-logging-delete`
-- `aws.impact.bedrock-invoke-model-guardrail-trigger`
-- `aws.impact.bedrock-converse-guardrail-trigger`
-- `aws.persistence.iam-create-admin-user` customized to print access key ID
-
-### GCP
-- `gcp.privilege-escalation.tag-based-privilege-escalation`
-
-## Custom Flags
-- `--prefix` set a custom prefix for user agent and resources (`stratus-red-team` default)
-
-
-# Stratus Red Team
-
-<p align="center">
-  <img src="./docs/logo.png" alt="Stratus Red Team" width="300" />
-</p>
 
 Stratus Red Team is "[Atomic Red Team](https://github.com/redcanaryco/atomic-red-team)™" for the cloud, allowing to emulate offensive attack techniques in a granular and self-contained manner.
 
@@ -30,6 +7,47 @@ Stratus Red Team is "[Atomic Red Team](https://github.com/redcanaryco/atomic-red
     <img src="./docs/demo.gif" alt="Terminal recording" />
   </a>
 </p>
+
+## Panther-Enhanced Fork
+
+This fork adds **end-to-end integration testing for detection engineering**. Instead of crafted test cases that may not match production logs, simulate real attacks to generate authentic log data for detection validation.
+
+### Why End-to-End Testing?
+
+Traditional detection testing uses theoretical log samples that may differ from real-world patterns. This approach:
+- **Generates authentic logs** from actual attack simulations  
+- **Tests the complete pipeline** from log collection to alerting
+- **Enables test-driven detection development** with real attack patterns
+- **Provides confidence** that idle detection rules will work when attacks occur
+
+### Panther Enhancements
+
+**Custom Prefix Support** - Use `--prefix` to avoid "stratus-red-team" detection by AI systems:
+```bash
+stratus detonate aws.persistence.iam-create-admin-user --prefix "security-test"
+```
+
+**New Attack Techniques** - Enhanced AI/Bedrock security testing:
+- `aws.defense-evasion.bedrock-guardrail-delete` - Delete AI safety guardrails
+- `aws.defense-evasion.bedrock-model-invocation-logging-delete` - Disrupt AI activity monitoring
+- `aws.impact.bedrock-converse-guardrail-trigger` - Test guardrail limits via Converse API
+- `aws.impact.bedrock-invoke-model-guardrail-trigger` - Test guardrail limits via InvokeModel API
+- `aws.persistence.iam-create-admin-user` - customized to print access key ID
+- `gcp.privilege-escalation.tag-based-privilege-escalation` - Escalate GCP compute privileges via conditional access tags
+
+**Detection Workflow**:
+1. Run attack simulations → Generate authentic logs
+2. Export CloudTrail/app logs → Create test fixtures  
+3. Write detections → Based on real attack patterns
+4. Re-run simulations → Validate end-to-end pipeline
+
+### Related Projects & Talks
+
+**Sister Project**: [Grimoire](https://github.com/panther-labs/grimoire) - Panther's fork of Grimoire for end-to-end detection testing automation
+
+**Talks**:
+- [Incorporating End to End Integration Testing into your Detection Engineering Workflow - Open Cloud Security Conference (short version)](https://youtu.be/4Ijyc2JW-3w)
+- Incorporating End to End Integration Testing into your Detection Engineering Workflow - BSides Boulder (full version) - link TBD
 
 Read the announcement blog posts:
 - https://www.datadoghq.com/blog/cyber-attack-simulation-with-stratus-red-team/
