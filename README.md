@@ -38,7 +38,8 @@ stratus detonate aws.persistence.iam-create-admin-user --prefix "security-test"
 
 #### Detection Workflow
 1. Run attack simulations to generate authentic logs
-2. Export CloudTrail/app logs → Create test fixtures  
+2. Export CloudTrail/application logs
+3. Create test fixtures using the logs you exported
 3. Write detections → Based on real attack patterns
 4. Re-run simulations → Validate end-to-end pipeline
 
