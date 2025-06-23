@@ -1,6 +1,9 @@
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)  [![Tests](https://github.com/DataDog/stratus-red-team/actions/workflows/test.yml/badge.svg)](https://github.com/DataDog/stratus-red-team/actions/workflows/test.yml) [![static analysis](https://github.com/DataDog/stratus-red-team/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/DataDog/stratus-red-team/actions/workflows/static-analysis.yml) ![Maintainer](https://img.shields.io/badge/maintainer-@christophetd-blue) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/DataDog/stratus-red-team/badge)](https://api.securityscorecards.dev/projects/github.com/DataDog/stratus-red-team) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6530/badge)](https://bestpractices.coreinfrastructure.org/projects/6530)
 
-Stratus Red Team is "[Atomic Red Team](https://github.com/redcanaryco/atomic-red-team)™" for the cloud, allowing to emulate offensive attack techniques in a granular and self-contained manner.
+## Panther-enhanced fork of Stratus Red Team
+[Stratus Red Team](https://github.com/DataDog/stratus-red-team) is an open-source adversary emulation tool that lets you validate the security of your cloud environments by replicating offensive attack techniques in a granular and self-contained manner. It can be thought of as [Atomic Red Team](https://github.com/redcanaryco/atomic-red-team)™ for the cloud. 
+
+This repository is a Panther-enhanced fork of Stratus Red Team that adds **end-to-end integration testing for detection engineering**. Instead of using fabricated test cases that may not match production logs, you can use this fork to generate authentic log data, allowing for better attack simulation and detection validation.
 
 <p align="center">
   <a href="https://github.com/DataDog/stratus-red-team/raw/main/docs/demo.gif">
