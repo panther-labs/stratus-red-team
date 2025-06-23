@@ -12,7 +12,7 @@ This repository is a Panther-enhanced fork of Stratus Red Team that adds **end-t
 </p>
 
 
-### Why End-to-End Testing?
+### Why perform end-to-end testing?
 
 Traditional detection testing uses theoretical log samples that may differ from real-world patterns. This approach:
 - **Generates authentic logs** from actual attack simulations  
