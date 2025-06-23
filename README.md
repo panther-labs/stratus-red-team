@@ -28,7 +28,8 @@ Use `--prefix` to avoid "stratus-red-team" detection by AI systems:
 stratus detonate aws.persistence.iam-create-admin-user --prefix "security-test"
 ```
 
-**New Attack Techniques** - Enhanced AI/Bedrock security testing:
+#### Additional attack techniques
+Enhanced AI/Bedrock security testing:
 - `aws.defense-evasion.bedrock-guardrail-delete` - Delete AI safety guardrails
 - `aws.defense-evasion.bedrock-model-invocation-logging-delete` - Disrupt AI activity monitoring
 - `aws.impact.bedrock-converse-guardrail-trigger` - Test guardrail limits via Converse API
