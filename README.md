@@ -44,7 +44,7 @@ Enhanced AI/Bedrock security testing:
 4. Write detections
 5. Re-run attack simulations to validate your pipeline end-to-end
 
-### Related Projects & Talks
+### Related projects and talks
 
 **Sister Project**: [Grimoire](https://github.com/panther-labs/grimoire) - Panther's fork of Grimoire for end-to-end detection testing automation
 
