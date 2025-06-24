@@ -1,35 +1,57 @@
-# Stratus Red Team - Panther Custom Fork
-
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)  [![Tests](https://github.com/DataDog/stratus-red-team/actions/workflows/test.yml/badge.svg)](https://github.com/DataDog/stratus-red-team/actions/workflows/test.yml) [![static analysis](https://github.com/DataDog/stratus-red-team/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/DataDog/stratus-red-team/actions/workflows/static-analysis.yml) ![Maintainer](https://img.shields.io/badge/maintainer-@christophetd-blue) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/DataDog/stratus-red-team/badge)](https://api.securityscorecards.dev/projects/github.com/DataDog/stratus-red-team) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6530/badge)](https://bestpractices.coreinfrastructure.org/projects/6530)
 
-## New Attack Techniques
-### AWS
-- `aws.defense-evasion.bedrock-guardrail-delete`
-- `aws.defense-evasion.bedrock-model-invocation-logging-delete`
-- `aws.impact.bedrock-invoke-model-guardrail-trigger`
-- `aws.impact.bedrock-converse-guardrail-trigger`
-- `aws.persistence.iam-create-admin-user` customized to print access key ID
+## Panther-enhanced fork of Stratus Red Team
+[Stratus Red Team](https://github.com/DataDog/stratus-red-team) is an open-source adversary emulation tool that lets you validate the security of your cloud environments by replicating offensive attack techniques in a granular and self-contained manner. It can be thought of as [Atomic Red Team](https://github.com/redcanaryco/atomic-red-team)™ for the cloud. 
 
-### GCP
-- `gcp.privilege-escalation.tag-based-privilege-escalation`
-
-## Custom Flags
-- `--prefix` set a custom prefix for user agent and resources (`stratus-red-team` default)
-
-
-# Stratus Red Team
-
-<p align="center">
-  <img src="./docs/logo.png" alt="Stratus Red Team" width="300" />
-</p>
-
-Stratus Red Team is "[Atomic Red Team](https://github.com/redcanaryco/atomic-red-team)™" for the cloud, allowing to emulate offensive attack techniques in a granular and self-contained manner.
+This repository is a Panther-enhanced fork of Stratus Red Team that adds **end-to-end integration testing for detection engineering**. Instead of using fabricated test cases that may not match production logs, you can use this fork to generate authentic log data, allowing for better attack simulation and detection validation.
 
 <p align="center">
   <a href="https://github.com/DataDog/stratus-red-team/raw/main/docs/demo.gif">
     <img src="./docs/demo.gif" alt="Terminal recording" />
   </a>
 </p>
+
+
+### Why perform end-to-end testing?
+
+Traditional detection testing uses theoretical log samples that may differ from real-world patterns. This approach:
+- **Generates authentic logs** from actual attack simulations  
+- **Tests the complete pipeline** from log collection to alerting
+- **Enables test-driven detection development** with real attack patterns
+- **Provides confidence** that idle detection rules will work when attacks occur
+
+### Panther enhancements
+
+#### Custom prefix support
+Use `--prefix` to avoid "stratus-red-team" detection by AI systems:
+```bash
+stratus detonate aws.persistence.iam-create-admin-user --prefix "security-test"
+```
+
+#### Additional attack techniques
+Enhanced AI/Bedrock security testing:
+- `aws.defense-evasion.bedrock-guardrail-delete` - Delete AI safety guardrails
+- `aws.defense-evasion.bedrock-model-invocation-logging-delete` - Disrupt AI activity monitoring
+- `aws.impact.bedrock-converse-guardrail-trigger` - Test guardrail limits via Converse API
+- `aws.impact.bedrock-invoke-model-guardrail-trigger` - Test guardrail limits via InvokeModel API
+- `aws.persistence.iam-create-admin-user` - Customized to print access key ID
+- `gcp.privilege-escalation.tag-based-privilege-escalation` - Escalate GCP compute privileges via conditional access tags
+
+#### Detection Workflow
+1. Run attack simulations to generate authentic logs
+2. Export CloudTrail/application logs
+3. Create test fixtures using the logs you exported
+4. Write detections
+5. Re-run attack simulations to validate your pipeline end-to-end
+
+### Related projects and talks
+
+#### Grimoire
+Panther also has a [fork of Grimoire](https://github.com/panther-labs/grimoire), which you can use for end-to-end detection testing automation
+
+#### Talks
+- [Incorporating End to End Integration Testing into your Detection Engineering Workflow - Open Cloud Security Conference (short version)](https://youtu.be/4Ijyc2JW-3w)
+- Incorporating End to End Integration Testing into your Detection Engineering Workflow - BSides Boulder (full version) - link TBD
 
 Read the announcement blog posts:
 - https://www.datadoghq.com/blog/cyber-attack-simulation-with-stratus-red-team/
