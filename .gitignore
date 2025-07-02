@@ -3,3 +3,5 @@ bin
 **/.terraform
 **/.DS_Store
 dist/
+.cursor
+.env
