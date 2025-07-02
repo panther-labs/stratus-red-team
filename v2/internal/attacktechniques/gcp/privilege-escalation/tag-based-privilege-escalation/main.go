@@ -114,11 +114,6 @@ Mitigation strategies:
 	})
 }
 
-// Helper function to return a pointer to a string
-func stringPtr(s string) *string {
-	return &s
-}
-
 func detonate(params map[string]string, providers stratus.CloudProviders) error {
 	ctx := context.Background()
 	projectID := params["project_id"]
