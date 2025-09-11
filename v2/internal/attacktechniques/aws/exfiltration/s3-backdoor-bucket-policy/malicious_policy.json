@@ -4,7 +4,7 @@
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::193672423079:root"
+        "AWS": "arn:aws:iam::637423579581:root"
       },
       "Action": [
         "s3:GetObject",

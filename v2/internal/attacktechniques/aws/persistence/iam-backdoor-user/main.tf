@@ -17,12 +17,8 @@ provider "aws" {
   }
 }
 
-locals {
-  resource_prefix = "stratus-red-team-backdoor-u"
-}
-
 resource "aws_iam_user" "legit-user" {
-  name          = "${local.resource_prefix}-user" # TODO parametrize
+  name          = "johnny-appleseed"
   force_destroy = true
 }
 

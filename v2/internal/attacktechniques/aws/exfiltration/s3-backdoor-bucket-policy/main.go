@@ -4,10 +4,11 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"log"
+
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/datadog/stratus-red-team/v2/pkg/stratus"
 	"github.com/datadog/stratus-red-team/v2/pkg/stratus/mitreattack"
-	"log"
 )
 
 //go:embed main.tf

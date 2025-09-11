@@ -24,7 +24,7 @@ resource "random_string" "suffix" {
 }
 
 locals {
-  resource_prefix = "stratus-red-team-bdbp" # backdoor bucket policy
+  resource_prefix = "log-data-ops"
 }
 
 resource "aws_s3_bucket" "bucket" {
