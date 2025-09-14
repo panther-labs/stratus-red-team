@@ -96,3 +96,4 @@ Many techniques use Terraform for infrastructure provisioning. The codebase uses
 
 ### Panther Enhancements
 This fork includes additional techniques for AI/Bedrock security testing and tag-based privilege escalation scenarios not found in the upstream version.
+- Don't use emojis
