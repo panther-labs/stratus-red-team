@@ -29,6 +29,7 @@ func init() {
 	statusCmd := buildStatusCmd()
 	cleanupCmd := buildCleanupCmd()
 	versionCmd := buildVersionCmd()
+	scenarioCmd := buildScenarioCmd()
 
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(showCmd)
@@ -38,6 +39,7 @@ func init() {
 	rootCmd.AddCommand(statusCmd)
 	rootCmd.AddCommand(cleanupCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(scenarioCmd)
 }
 
 func setupLogging() {

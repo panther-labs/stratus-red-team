@@ -8,54 +8,55 @@ This directory contains multi-stage attack scenarios that orchestrate multiple S
 
 **Attack Chain:**
 1. **Persistence** - `aws.persistence.iam-backdoor-user`
-   - Creates IAM user via Terraform
-   - Generates access key for the user
-   - Logs both Access Key ID and Secret Access Key for capture
-   
-2. **Defense Evasion** - `aws.exfiltration.s3-backdoor-bucket-policy` 
-   - Creates S3 bucket via Terraform
-   - Modifies bucket policy to allow access from external AWS account (637423579581)
-   - Grants `s3:GetObject`, `s3:GetBucketLocation`, `s3:ListBucket` permissions
-
+2. **Defense Evasion** - `aws.exfiltration.s3-backdoor-bucket-policy`
 3. **Discovery & Attempted Exfiltration** - Custom S3 operations using backdoor credentials
-   - Uses captured IAM credentials to authenticate to AWS
-   - Enumerates all S3 buckets in the account (`ListBuckets`)
-   - Searches for buckets containing "training-data" in the name
-   - Attempts to sync data from training buckets to the backdoored bucket
-   - **Expected to fail** due to insufficient IAM permissions (realistic scenario)
-
 4. **Discovery** - Cross-region EC2 reconnaissance
-   - Scans US regions (us-east-1, us-east-2, us-west-1, us-west-2)
-   - Lists running EC2 instances in each region (`DescribeInstances`)
-   - Demonstrates lateral movement and infrastructure reconnaissance
+
+### EC2 Credential Harvesting to Secrets Exfiltration (`ec2-secrets-harvest/`)
+
+**Attack Chain:**
+1. **Credential Access** - `aws.credential-access.ec2-steal-instance-credentials`
+   - Compromises EC2 instance credentials via metadata service access
+   - Simulates SSRF vulnerability, container escape, or insider threat
+   - Captures temporary AWS credentials (access key, secret key, session token)
+
+2. **Discovery** - Multi-region secrets enumeration
+   - Uses harvested EC2 credentials to scan 5 AWS regions
+   - Lists all secrets in Secrets Manager across regions (`ListSecrets`)
+   - Identifies high-value targets (database passwords, API keys, certificates)
+   - Demonstrates cross-region reconnaissance and credential abuse
+
+3. **Credential Access** - `aws.credential-access.secretsmanager-batch-retrieve-secrets`
+   - Attempts bulk retrieval of secrets using compromised EC2 credentials
+   - Targets high-value secrets identified in discovery phase
+   - Generates multiple `GetSecretValue` operations for detection testing
+
+4. **Defense Evasion** - `aws.defense-evasion.cloudtrail-stop`
+   - Attempts to disable CloudTrail logging to cover attack tracks
+   - Demonstrates post-compromise defense evasion behavior
+   - **Expected to fail** if proper IAM restrictions are in place
 
 **Execution Order:**
-1. Cleanup existing IAM technique state (if any)
-2. Warmup `aws.persistence.iam-backdoor-user` (creates IAM user)
-3. Detonate `aws.persistence.iam-backdoor-user` (creates access key)
-4. Parse logs to extract Access Key ID and Secret Access Key
-5. Cleanup existing S3 technique state (if any)  
-6. Warmup `aws.exfiltration.s3-backdoor-bucket-policy` (creates S3 bucket)
-7. Detonate `aws.exfiltration.s3-backdoor-bucket-policy` (modifies bucket policy)
-8. Parse logs to extract S3 bucket name
-9. **Discovery Phase**: Use backdoor credentials to enumerate all S3 buckets
-10. **Target Identification**: Search for buckets containing "training-data"
-11. **Attempted Exfiltration**: Try to sync data from training buckets (fails)
-12. **Reconnaissance Phase**: Scan US regions for running EC2 instances  
-13. **Infrastructure Discovery**: List instance IDs and types in each region
-14. Cleanup both techniques when user confirms
+1. Cleanup existing EC2 credential technique state (if any)
+2. Warmup `aws.credential-access.ec2-steal-instance-credentials` (creates EC2 instance)
+3. Detonate `aws.credential-access.ec2-steal-instance-credentials` (harvests credentials)
+4. Parse output to extract harvested credentials (access key, secret key, session token)
+5. **Multi-region Discovery**: Use harvested credentials to enumerate secrets across 5 regions
+6. **Target Identification**: Identify high-value secrets (prod, database, api-key patterns)
+7. **Bulk Retrieval**: Attempt batch secret retrieval using harvested credentials
+8. **Defense Evasion**: Try to disable CloudTrail logging to cover tracks
+9. Cleanup techniques when user confirms
 
 **Detection Opportunities:**
-- `CreateAccessKey` CloudTrail events from unusual contexts
-- `PutBucketPolicy` events that modify bucket permissions  
-- `ListBuckets` operations for account-wide S3 discovery
-- `ListObjectsV2` operations against multiple buckets (reconnaissance pattern)
-- `CopyObject` attempts indicating data exfiltration (will fail due to permissions)
-- `DescribeInstances` operations across multiple regions (cross-region scanning)
-- Rapid successive API calls across geographic regions from same credential
-- Failed S3 operations due to insufficient permissions (Access Denied patterns)
-- Cross-technique correlation for multi-stage attack detection
-- Time-based correlation between IAM key creation → S3 discovery → EC2 reconnaissance
+- EC2 instance metadata service abuse patterns
+- Cross-region `ListSecrets` operations from EC2 credentials
+- Bulk `GetSecretValue` operations in short timeframes
+- `StopLogging` CloudTrail events from compromised credentials
+- Unusual Secrets Manager access patterns from EC2 instance roles
+- Time correlation between credential theft → discovery → bulk retrieval → evasion
+- Geographic anomalies (same credentials across multiple regions rapidly)
+- Failed secret access attempts (realistic permission boundaries)
+- EC2 credential context violations (instance credentials used outside expected scope)
 
 **Usage:**
 ```bash
@@ -65,6 +66,15 @@ go build -o iam-s3-scenario iam-to-s3-training-data/main.go
 
 # Or run directly
 go run iam-to-s3-training-data/main.go
+```
+
+```bash
+cd scenarios/
+go build -o ec2-secrets-scenario ec2-secrets-harvest/main.go
+./ec2-secrets-scenario
+
+# Or run directly
+go run ec2-secrets-harvest/main.go
 ```
 
 ## Running Scenarios
@@ -79,12 +89,16 @@ go run iam-to-s3-training-data/main.go
 # Navigate to scenarios directory
 cd scenarios/
 
-# Build and run specific scenario
+# Build and run specific scenarios
 make iam-to-s3-training-data
 ./iam-s3-scenario
 
+make ec2-secrets-harvest
+./ec2-secrets-scenario
+
 # Or run directly without building
 go run iam-to-s3-training-data/main.go
+go run ec2-secrets-harvest/main.go
 
 # Build all scenarios
 make all
